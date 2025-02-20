@@ -9,7 +9,12 @@ export const SITE: Site = {
   lightAndDarkMode: true,
   postPerPage: 25,
   twitterAccount: "mariuskimmina",
-  tags: ['Marius Kimmina', 'engineering leader', 'personal blog', 'musings of an engineering leader' ]
+  tags: [
+    "Marius Kimmina",
+    "engineering leader",
+    "personal blog",
+    "musings of an engineering leader",
+  ],
 };
 
 export const LOCALE = ["en-EN"]; // set to [] to use the environment default
@@ -23,8 +28,8 @@ export const LOGO_IMAGE = {
 
 export const SOCIALS: SocialObjects = [
   {
-    name: "Github" 
-    href: "https://github.com/silent1mezzo",
+    name: "Github",
+    href: "https://github.com/mariuskimmina",
     linkTitle: ` ${SITE.title} on Github`,
     active: true,
   },
@@ -42,7 +47,7 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/in/adammckerlie/",
+    href: "https://www.linkedin.com/in/mariuskimmina/",
     linkTitle: `${SITE.title} on LinkedIn`,
     active: true,
   },
@@ -56,7 +61,7 @@ export const SOCIALS: SocialObjects = [
     name: "Twitter",
     href: "https://twitter.com/adammckerlie",
     linkTitle: `${SITE.title} on Twitter`,
-    active: true,
+    active: false,
   },
   {
     name: "Twitch",
@@ -144,7 +149,7 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "RSS",
-    href: "https://mckerlie.com/index.xml",
+    href: "https://mariuskimmina.com/index.xml",
     linkTitle: `${SITE.title} RSS`,
     active: true,
   },
