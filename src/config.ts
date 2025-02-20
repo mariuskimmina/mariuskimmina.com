@@ -3,18 +3,13 @@ import type { Site, SocialObjects } from "./types";
 export const SITE: Site = {
   website: "https://mariuskimmina.com/",
   author: "Marius Kimmina",
-  desc: "Musings of an Infrastructure / DevOps Engineer",
+  desc: "Thoughts of an Infrastructure / DevOps Engineer",
   title: "Marius Kimmina",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerPage: 25,
   twitterAccount: "mariuskimmina",
-  tags: [
-    "Marius Kimmina",
-    "engineering leader",
-    "personal blog",
-    "musings of an engineering leader",
-  ],
+  tags: ["Marius Kimmina", "engineering leader", "personal blog"],
 };
 
 export const LOCALE = ["en-EN"]; // set to [] to use the environment default
