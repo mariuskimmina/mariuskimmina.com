@@ -67,7 +67,7 @@ that eliminated the need for manual ownership verification.
 ## Introduction of ACME
 When [Let's Encrypt](https://letsencrypt.org/) came around, things changed drastically. 
 
-![image](/blog/tlsplus/le-logo-small.png "Let's Encrypt")
+![image](./le-logo-small.png "Let's Encrypt")
 
 They simplified obtaining a signed certificate for your domain into the following steps
 
@@ -111,7 +111,7 @@ No need to install any other applications you just have to setup caddy to serve 
 and it will obtain (and renew) it's certificate. This also made the entire process even more reliable, since it eliminiated 
 the need for `certbot` and the server to work together.
 
-![image](/blog/tlsplus/how-it-works-caddy.png "ACME in Caddy flow")
+![image](./how-it-works-caddy.png "ACME in Caddy flow")
 
 Caddy was the first application ever to manage it's own certificates and has further revolutionized the use of encryption
 on the web. 
@@ -129,13 +129,12 @@ Especially when the DNS server is actually itself the authoritative DNS server f
 be possible for this server to obtain a certificate for this domain. That's excatly what I did and the DNS server
 I did it for is [CoreDNS](https://github.com/coredns/coredns). 
 
-![image](/blog/tlsplus/coredns-logo-small.png "CoreDNS logo")
-
+![image](./coredns-logo-small.png "CoreDNS logo")
 
 CoreDNS has a plugin architecture, which means that the server by itself provides only a bare minimum of functionaliy.
 The user then adds plugins to make CoreDNS fit his use case. I have adjusted the `tls` plugin so that it can act as an 
 ACME client and requests certificates from Let's Encrypt (or other CAs).
-![image](/blog/tlsplus/how-it-works.png "CoreDNS Plugin flow")
+![image](./how-it-works.png "CoreDNS Plugin flow")
 
 Certificates that are obtained this way will also automatically be renewed once more than 70% of their validity period
 have passed, just like certbot would do. There is a significan't advantage here tho, since CoreDNS has to be restarted to
@@ -181,7 +180,7 @@ The plugin will also start to serve DNS requests on port 53. Let's Encrypt recei
 
 Furthermore, the plugin then starts a loop that runs in the background and checks if the certificate is about to expire. If it is, CoreDNS will initialize a restart which in turn leads to the plugin setup being executed again, which leads to a new certificate being obtained.
 
-![image](/blog/tlsplus/ACME-Flow-Final-10.png "Implementation in CoreDNS")
+![image](./ACME-Flow-Final-10.png "Implementation in CoreDNS")
 
 
 ## Requirements
@@ -199,7 +198,7 @@ The goal is to have this plugin integrated into the main CoreDNS repository, onc
 Until then, the plugin exists as an external Plugin, which means you will have to go through some extra steps to compile 
 CoreDNS with the Plugin integrated, which are described here:
 
-```
+```bash
 # Clone CoreDNS
 git clone https://github.com/coredns/coredns
 cd coredns
@@ -333,7 +332,7 @@ Now we are almost ready to obtain a Certificate for `dns.mariuskimmina.com` and 
 
 We need to setup `dns.mariuskimmina.com` at our dns registar of choice, which for me is `domains.google.com`. In more concret terms, this means we need to setup an A record for `dns.mariuskimmina.com` that points at `206.81.17.195` and an NS record for `dns.mariuskimmina.com` that points at `dns.mariuskimmina.com`
 
-![image](/blog/tlsplus/registar-config.png "Config on domains.google.com")
+![image](./registar-config.png "Config on domains.google.com")
 
 Once that has been put in place, we can run `coredns` and a certificate signed by Let's Encrypt should automatically be obtained. 
 
@@ -412,7 +411,7 @@ Caddy can also automatically perform local HTTPS by creating it's own trusted ce
 ## Final Words
 This Plugin was created as part of the 2022 [Google Summer of Code](https://summerofcode.withgoogle.com/). 
 
-![image](/blog/tlsplus/gsoc-image.png "Google Summer of Code")
+![image](./gsoc-image.png "Google Summer of Code")
 
 As a student I had made some small contributions to open-source projects here and there 
 but nothing that comes even close to the scale of this project. Participating in GSoC helped empower me to focus on a project all the way from start to finish,
