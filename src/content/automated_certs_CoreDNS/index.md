@@ -1,9 +1,8 @@
 ---
 title: Introducing Automated TLS Certificates in CoreDNS
 author: Marius Kimmina
-date: 2022-09-02 14:10:00 +0800
-tags: [DNS, Infra]
-published: true
+date: 2022-09-02
+tags: [dns, coredns, go]
 ---
 
 Have you ever had to setup [DNS over TLS](https://www.cloudflare.com/learning/dns/dns-over-tls/) for your Domain Nameserver?
