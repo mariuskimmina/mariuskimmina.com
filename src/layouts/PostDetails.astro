@@ -1,0 +1,97 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Tag from "@components/Tag.astro";
+import Card from "@components/Card";
+import Datetime from "@components/Datetime";
+import type { CollectionEntry } from "astro:content";
+import { slugifyStr } from "@utils/slugify";
+import slugify from "@utils/slugify";
+import { SocialShare } from "astro-social-share";
+import { SITE } from "@config";
+import { getRelatedPosts } from "@utils/getRelatedPosts";
+
+export interface Props {
+  post: CollectionEntry<"posts">;
+  allPosts?: CollectionEntry<"posts">[];
+}
+
+const { post, allPosts } = Astro.props;
+
+const { title, author, description, ogImage, canonicalURL, date, tags } =
+  post.data;
+
+const { Content } = await post.render();
+
+const slug = slugify(post.data);
+
+const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
+const ogUrl = new URL(
+  ogImageUrl ?? `/posts/${slug}.png`,
+  Astro.url.origin
+).href;
+
+const relatedPosts = getRelatedPosts(allPosts, slug, tags);
+---
+
+<Layout
+  title={title}
+  author={author}
+  description={description}
+  ogImage={ogUrl}
+  canonicalURL={canonicalURL}
+  tags={tags}
+>
+  <Header />
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2">
+    <button
+      class="focus-outline mb-2 mt-8 flex hover:opacity-75"
+      onclick="history.back()"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg"
+        ><path
+          d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"
+        ></path>
+      </svg><span>Go back</span>
+    </button>
+  </div>
+  <main id="main-content">
+    <h1 transition:name={slug} class="post-title">{title}</h1>
+    <Datetime datetime={date} size="lg" className="my-2" />
+    <SocialShare
+      description={description}
+      via={SITE.twitterAccount}
+      title={title}
+    />
+    <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl">
+      <Content />
+    </article>
+
+    <ul class="tags-container">
+      {tags.map(tag => <Tag name={slugifyStr(tag)} />)}
+    </ul>
+    
+    <h2  class="post-title">Related Posts</h2>
+    <ul class="related-posts">
+      {relatedPosts.map(post => <Card
+        href={`/posts/${slugify(post.data)}/`}
+        frontmatter={post.data}
+        secHeading={false}
+      />)}
+    </ul>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  main {
+    @apply mx-auto w-full max-w-3xl px-4 pb-12;
+  }
+  .post-title {
+    @apply text-2xl font-semibold text-skin-accent;
+  }
+  .tags-container {
+    @apply my-8;
+  }
+</style>
