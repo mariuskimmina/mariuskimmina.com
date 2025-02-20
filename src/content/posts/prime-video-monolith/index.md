@@ -45,7 +45,7 @@ I am again quoting from the original article:
 Currently, the price for AWS step functions sits at $0.025 per 1,000 state transitions. If we assume that by “multiple” they mean 3, 
 which is probably a generous assumption, then streaming for one hour would result in
 
-MATH
+3600 * 3 * 0.025 / 1000 = 0.27
 
 0.27$ for one hour of streaming. This really shows that, while serverless options are often are great 
 way to get started in developing new services and applications, they can get absurdly expensive under heavy workloads.
@@ -68,7 +68,7 @@ The second change eliminates the intermediate S3 bucket which was frequently acc
 
 Of course, all of this is easy for me to write now looking at their article with all the benefit of hindsight. Making the decision to re-architect something that is already running in production is never easy and making the call to use less of the prominent microservice based approach and instead couple things closer together must have been even harder. My respect to the engineers who made this decision and congratulations to their achievements. Please go and read their article, it’s much better than this one.
 
-##Closing Words
+## Closing Words
 
 I hope got value out of this and consider leaving your email address so that you don’t miss out on any of my future posts. I am also just a human who makes mistakes, so if you think anything here is wrong, please let me know.
 If you want to encourage me to keep doing this you can buy me a coffee.
