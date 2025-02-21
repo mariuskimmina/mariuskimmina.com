@@ -2,8 +2,7 @@
 title: Running a Monolith on Hetzner (Kubernetes Detox)
 author: Marius Kimmina
 date: 2025-03-30
-tags: [aws, microservices, lambda, s3]
-published: false
+tags: [hetzner]
 ---
 
 I created my first website using the LAMP stack and it often feels like times where much simpler back then.
