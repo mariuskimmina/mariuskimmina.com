@@ -26,3 +26,4 @@ If I had to critize anything it would probably be the dinner where instead of ta
 ordered you where not supposed to move around anymore. Especially for the context of a conference where you are supposed to talk to a lot of different people this seemed like
 a rather odd decision. Perhaps it was an attempt at Chaos Engineering? 
 
+Overall an amazing event and I was really happy with my experience speaking in public on a tech conference.
