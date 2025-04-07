@@ -59,11 +59,6 @@ const relatedPosts = getRelatedPosts(allPosts, slug, tags);
   <main id="main-content">
     <h1 transition:name={slug} class="post-title">{title}</h1>
     <Datetime datetime={date} size="lg" className="my-2" />
-    <SocialShare
-      description={description}
-      via={SITE.twitterAccount}
-      title={title}
-    />
     <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl">
       <Content />
     </article>
