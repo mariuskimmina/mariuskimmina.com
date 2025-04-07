@@ -5,6 +5,8 @@ date: 2025-03-31
 tags: [public speaking]
 ---
 
+![image](./talk.jpg "Me talking on the stage")
+
 Last Friday, 28.03.2025, I gave my first ever talk at a tech conference, [SREday London 2025](https://sreday.com/2025-london-q1/).
 Today I wanted to reflect on that experience, which was been a great one overall for sure. I really enjoyed the vibe of the conference, 
 it was very chill with these cozy cinema rooms to watch the talks and no one was really trying to sell me anything - sure there were a few booths 
