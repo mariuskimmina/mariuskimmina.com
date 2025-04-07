@@ -23,6 +23,7 @@ export type SocialIcons = {
 
 export type SocialMedia =
   | "Github"
+  | "Bluesky"
   | "Facebook"
   | "Instagram"
   | "LinkedIn"
