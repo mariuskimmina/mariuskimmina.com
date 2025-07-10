@@ -4,7 +4,7 @@ import Layout from "@layouts/Layout.astro";
 import Main from "@layouts/Main.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
-import Card from "@components/Card";
+import { getYoutubeThumbnail } from "@utils/getYoutubeThumbnail";
 import type { CollectionEntry } from "astro:content";
 
 export interface Props {
@@ -16,14 +16,80 @@ const { talks } = Astro.props;
 
 <Layout title={`Talks | ${SITE.title}`}>
   <Header activeNav="talks" />
-  <Main pageTitle="Talks" pageDesc="Conference talks and presentations I've given.">
-    <ul>
+  <Main
+    pageTitle="Talks"
+    pageDesc="Conference talks and presentations I've given."
+  >
+    <div class="grid gap-6">
       {
-        talks.map(({ data, slug }) => (
-          <Card href={`/talks/${slug}/`} frontmatter={data} />
-        ))
+        talks.map(({ data, slug }) => {
+          const thumbnailUrl = data.video
+            ? getYoutubeThumbnail(data.video)
+            : null;
+
+          return (
+            <div class="rounded-lg border border-skin-line bg-skin-card p-6">
+              <div class="md:flex-row flex flex-col gap-4">
+                {thumbnailUrl && (
+                  <div class="md:w-80 flex-shrink-0">
+                    <a
+                      href={data.video}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block"
+                    >
+                      <img
+                        src={thumbnailUrl}
+                        alt={`${data.title} video thumbnail`}
+                        class="md:h-44 h-48 w-full rounded-lg object-cover transition-opacity hover:opacity-80"
+                        loading="lazy"
+                      />
+                    </a>
+                  </div>
+                )}
+                <div class="flex-1">
+                  <h2 class="mb-2 text-xl font-semibold">
+                    <a
+                      href={`/talks/${slug}/`}
+                      class="hover:text-skin-accent-2 text-skin-accent transition-colors"
+                    >
+                      {data.title}
+                    </a>
+                  </h2>
+                  <div class="text-skin-muted mb-3 text-sm">
+                    <span class="font-medium">{data.event}</span> •{" "}
+                    {data.location} • {data.date.toLocaleDateString()}
+                  </div>
+                  <p class="text-skin-base">{data.description}</p>
+                  <div class="mt-4 flex gap-3 text-sm">
+                    {data.video && (
+                      <a
+                        href={data.video}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="hover:text-skin-accent-2 text-skin-accent transition-colors"
+                      >
+                        📹 Watch Video
+                      </a>
+                    )}
+                    {data.slides && (
+                      <a
+                        href={data.slides}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="hover:text-skin-accent-2 text-skin-accent transition-colors"
+                      >
+                        📊 View Slides
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })
       }
-    </ul>
+    </div>
   </Main>
   <Footer />
 </Layout>

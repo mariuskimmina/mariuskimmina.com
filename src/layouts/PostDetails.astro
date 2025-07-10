@@ -39,13 +39,9 @@ const ogUrl = new URL(
 
 const relatedPosts = allPosts ? getRelatedPosts(allPosts, slug, tags) : [];
 
-import {
-  LinkedInShareButton,
-  RedditShareButton,
-} from "astro-social-share";
+import { LinkedInShareButton, RedditShareButton } from "astro-social-share";
 
-const BUTTONS = [LinkedInShareButton, RedditShareButton]
-
+const BUTTONS = [LinkedInShareButton, RedditShareButton];
 ---
 
 <Layout
@@ -72,11 +68,7 @@ const BUTTONS = [LinkedInShareButton, RedditShareButton]
   <main id="main-content">
     <h1 transition:name={slug} class="post-title">{title}</h1>
     <Datetime datetime={date} size="lg" className="my-2" />
-    <SocialShare
-      buttons={BUTTONS}
-      description={description}
-      title={title}
-    />
+    <SocialShare buttons={BUTTONS} description={description} title={title} />
     <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl">
       <Content />
     </article>
@@ -84,14 +76,18 @@ const BUTTONS = [LinkedInShareButton, RedditShareButton]
     <ul class="tags-container">
       {tags.map(tag => <Tag name={slugifyStr(tag)} />)}
     </ul>
-    
-    <h2  class="post-title">Related Posts</h2>
+
+    <h2 class="post-title">Related Posts</h2>
     <ul class="related-posts">
-      {relatedPosts.map(post => <Card
-        href={`/posts/${slugify(post.data)}/`}
-        frontmatter={post.data}
-        secHeading={false}
-      />)}
+      {
+        relatedPosts.map(post => (
+          <Card
+            href={`/posts/${slugify(post.data)}/`}
+            frontmatter={post.data}
+            secHeading={false}
+          />
+        ))
+      }
     </ul>
   </main>
   <Footer />
