@@ -1,19 +1,12 @@
 ---
-import { SITE } from "@config";
-import Posts from "@layouts/Posts.astro";
-import Talsk from "@layouts/Talks.astro";
-import getSortedPosts from "@utils/getSortedPosts";
-import getPageNumbers from "@utils/getPageNumbers";
-
+import Talks from "@layouts/Talks.astro";
 import { getCollection } from "astro:content";
 
-const posts = await getCollection("posts");
+const talks = await getCollection("talks");
 
-const sortedPosts = getSortedPosts(posts);
-
-const totalPages = getPageNumbers(sortedPosts.length);
-
-const paginatedPosts = sortedPosts.slice(0, SITE.postPerPage);
+const sortedTalks = talks.sort(
+  (a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf()
+);
 ---
 
-<Posts posts={paginatedPosts} pageNum={1} totalPages={totalPages.length} />
+<Talks talks={sortedTalks} />
