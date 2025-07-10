@@ -11,10 +11,11 @@ featured: true
 
 # From Spot Ocean to Karpenter - Zero Downtime Migration
 
-This talk explores one of the most challenging infrastructure migrations we've undertaken at adjoe:
-seamlessly transitioning our Kubernetes cluster from Spot Ocean to Karpenter without any downtime.
+In this talk I discuss one of the biggest infrastructure migrations that I've lead thus far, moving from Spot Ocean to Karpenter.
+I talk about how managed a seamless migration, our current setup for running Karpenter and why we build a custom controller to fix broken nodes.
 
 ## Resources
 
+- [Talk Recording](https://www.youtube.com/watch?v=N5nuhUq3kKU)
 - [Talk Details](https://sreday.com/2025-london-q1/Marius_Kimmina_adjoe_From_Spot_Ocean_to_Karpenter__Zero_Downtime_Migration)
 - [SREday London 2025](https://sreday.com/2025-london-q1/)
