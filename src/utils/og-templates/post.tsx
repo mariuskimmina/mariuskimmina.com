@@ -1,7 +1,7 @@
 import { SITE } from "@config";
 import type { CollectionEntry } from "astro:content";
 
-export default (post: CollectionEntry<"posts">) => {
+export default (post: CollectionEntry<"posts"> | CollectionEntry<"talks">) => {
   return (
     <div
       style={{
@@ -81,7 +81,7 @@ export default (post: CollectionEntry<"posts">) => {
                 "
               </span>
               <span style={{ overflow: "hidden", fontWeight: "bold" }}>
-                {post.data.author}
+                {"author" in post.data ? post.data.author : SITE.author}
               </span>
             </span>
 

@@ -13,26 +13,31 @@ import { SITE } from "@config";
 import { getRelatedPosts } from "@utils/getRelatedPosts";
 
 export interface Props {
-  post: CollectionEntry<"posts">;
-  allPosts?: CollectionEntry<"posts">[];
+  post: CollectionEntry<"posts"> | CollectionEntry<"talks">;
+  allPosts?: CollectionEntry<"posts">[] | CollectionEntry<"talks">[];
 }
 
 const { post, allPosts } = Astro.props;
 
-const { title, author, description, ogImage, canonicalURL, date, tags } =
-  post.data;
+// Handle both posts and talks data structures
+const isPost = "author" in post.data;
+const { title, description, ogImage, date } = post.data;
+const author = isPost ? post.data.author : "Marius Kimmina";
+const canonicalURL = isPost ? post.data.canonicalURL : undefined;
+const tags = isPost ? post.data.tags : [];
 
 const { Content } = await post.render();
 
 const slug = slugify(post.data);
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
+const contentType = isPost ? "posts" : "talks";
 const ogUrl = new URL(
-  ogImageUrl ?? `/posts/${slug}.png`,
+  ogImageUrl ?? `/${contentType}/${slug}.png`,
   Astro.url.origin
 ).href;
 
-const relatedPosts = getRelatedPosts(allPosts, slug, tags);
+const relatedPosts = allPosts ? getRelatedPosts(allPosts, slug, tags) : [];
 
 import {
   LinkedInShareButton,
