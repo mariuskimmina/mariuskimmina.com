@@ -170,7 +170,7 @@ function activityUrl(collection, value, uri) {
   if (collection === 'site.standard.document' && value.site?.endsWith(`/${BLOG_PUBLICATION_RKEY}`)) return `/writing/${key}/`;
   if (collection === 'buzz.bookhive.book' && value.hiveId) return `https://bookhive.buzz/book/${value.hiveId}`;
   if (collection.startsWith('id.sifa.')) return `https://sifa.id/p/${HANDLE}`;
-  if (collection.startsWith('io.kosakata.')) return 'https://kosakata.app/';
+  if (collection.startsWith('io.kosakata.')) return 'https://kosakata-production.up.railway.app/';
   if (collection === 'network.cosmik.card') return value.content?.url;
   if (collection === 'sh.tangled.repo') return `https://tangled.org/${HANDLE}/${value.name}`;
   if (collection === 'app.skyreader.social.share') return value.itemUrl;

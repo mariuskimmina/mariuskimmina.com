@@ -366,6 +366,8 @@ p, h1, h2, h3 { margin: 0; }
 .language-hero h1 { font-family: var(--font-display); font-size: var(--text-hero); line-height: .82; letter-spacing: -.07em; }
 .language-hero > div:first-child > p:not(.eyebrow) { max-width: 42rem; color: var(--ink-soft); font-size: var(--text-lg); }
 .tracked-deck-link { text-decoration-color: var(--turquoise); }
+.kosakata-cta { display: grid; justify-items: start; gap: var(--space-xs); }
+.kosakata-cta small { max-width: 28rem; color: var(--ink-soft); }
 .language-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-xl) var(--space-lg); margin: 0; }
 .language-stats div { min-width: 0; display: flex; flex-direction: column-reverse; gap: var(--space-xs); padding-top: var(--space-md); border-top: 1px solid var(--line); }
 .language-stats dt { color: var(--ink-soft); font-size: var(--text-xs); white-space: nowrap; }
