@@ -334,7 +334,7 @@ p, h1, h2, h3 { margin: 0; }
 .talks-intro { display: grid; justify-items: start; gap: var(--space-lg); }
 .talks-intro h1 { font-family: var(--font-display); font-size: var(--text-hero); line-height: .82; letter-spacing: -.07em; }
 .talks-intro > p:not(.eyebrow) { max-width: 38rem; color: var(--ink-soft); font-size: var(--text-lg); }
-.talk-photo { position: relative; margin: 0; padding: .45rem; background: var(--paper-light); border: 1px solid var(--ink); box-shadow: .55rem .65rem 0 var(--honey); transform: rotate(1.5deg); }
+.talk-photo { position: relative; margin: 0; padding: .45rem; background: var(--paper-light); border: 1px solid var(--ink); box-shadow: .55rem .65rem 0 color-mix(in oklch, var(--turquoise) 78%, var(--paper)); transform: rotate(1.5deg); }
 .talk-photo img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; filter: saturate(.82) contrast(1.03); }
 .talk-photo figcaption { padding: var(--space-sm) var(--space-xs) var(--space-2xs); color: var(--ink-soft); font-size: var(--text-xs); }
 .upcoming-talks { padding-block: var(--space-4xl); background: var(--ink); color: var(--paper); }

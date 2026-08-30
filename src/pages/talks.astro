@@ -61,9 +61,11 @@ const upcomingFromSifa = delivered
   .sort((a, b) => a.date.localeCompare(b.date));
 
 const upcoming = upcomingFromSifa.length ? upcomingFromSifa : [{
-  title: 'Technical talk — details coming soon',
+  title: 'Embracing Ephemeral Environments',
   eventName: 'bit summit',
+  location: 'Hamburg',
   date: '2026-09-24',
+  description: 'Since I joined adjoe, we have grown from 35 people to almost 300, and at the same time, we grew from 3 to 15 dev environments. This became a nightmare to maintain and somehow was still never enough. To solve this problem once and for all, we introduced ephemeral environments that developers can create on demand whenever they need them.',
   links: [{ uri: 'https://bit-summit.com/', type: 'event' }],
 }];
 
@@ -97,7 +99,7 @@ function primaryLink(talk: any) {
           <div>
             <p>{talk.eventName}{talk.location && <span> · {talk.location}</span>}</p>
             <h3>{talk.title}</h3>
-            <p>I’ll be giving a technical talk at bit summit this year. The topic and session time will follow.</p>
+            {talk.description && <p>{talk.description}</p>}
           </div>
           {primaryLink(talk) && <a href={primaryLink(talk).uri} aria-label={`Visit ${talk.eventName}`}>Event site ↗</a>}
         </article>
