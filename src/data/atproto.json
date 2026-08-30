@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-08-29T22:23:58.686Z",
+  "generatedAt": "2026-08-30T16:57:38.264Z",
   "handle": "mariuskimmina.com",
   "did": "did:plc:tbzfsowmg4zj234pws47u3x6",
   "pds": "https://eurosky.social",
   "collections": {
-    "app.bsky.feed.post": 325,
+    "app.bsky.feed.post": 326,
     "app.bsky.feed.repost": 151,
     "app.offprint.document.article": 3,
     "app.skyreader.social.share": 3,
@@ -3766,6 +3766,15 @@
     ]
   },
   "activity": [
+    {
+      "uri": "at://did:plc:tbzfsowmg4zj234pws47u3x6/app.bsky.feed.post/3mucs5rbahs2f",
+      "collection": "app.bsky.feed.post",
+      "app": "Bluesky",
+      "date": "2026-08-30T16:17:59.492Z",
+      "label": "Posted on Bluesky",
+      "url": "https://bsky.app/profile/mariuskimmina.com/post/3mucs5rbahs2f",
+      "text": "Gave my website a neat sunday afternoon makeover and added a /books section powered by my @bookhive.buzz records - interop ftw mariuskimmina.com/books/"
+    },
     {
       "uri": "at://did:plc:tbzfsowmg4zj234pws47u3x6/buzz.bookhive.book/3muaw4vdicsmb",
       "collection": "buzz.bookhive.book",

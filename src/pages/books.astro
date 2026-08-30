@@ -4,8 +4,6 @@ import data from '../data/atproto.json';
 
 const books = data.books;
 const finished = books.filter((book) => book.status?.endsWith('#finished'));
-const rated = books.filter((book) => typeof book.stars === 'number');
-const average = rated.length ? (rated.reduce((total, book) => total + book.stars, 0) / rated.length).toFixed(1) : null;
 const groups = [
   { id: 'reading', label: 'Currently Reading', shortLabel: 'Reading', books: books.filter((book) => !book.status || book.status.endsWith('#reading')) },
   { id: 'want-to-read', label: 'Want to Read', shortLabel: 'Want to Read', books: books.filter((book) => book.status?.endsWith('#wantToRead')) },
@@ -23,7 +21,6 @@ const groups = [
     <dl class="book-stats">
       <div><dt>On the shelf</dt><dd>{books.length}</dd></div>
       <div><dt>Marked finished</dt><dd>{finished.length}</dd></div>
-      <div><dt>Average rating</dt><dd>{average || '—'}<small>/10</small></dd></div>
     </dl>
   </section>
 
