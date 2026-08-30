@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const links = [
+  { url: 'https://jsteuernagel.de/', label: 'Jana’s cozy corner' },
+  { url: 'https://ellesho.me/page/website/now/', label: 'elle’s homepage' },
+  { url: 'https://dame.is/', label: 'dame.is' },
+  { url: 'https://brittanyellich.com/', label: 'Brittany Ellich' },
+  { url: 'https://www.pfrazee.com/', label: 'Paul’s Dev Notes' },
+  { url: 'https://people.kernel.org/monsieuricon/', label: 'Konstantin Ryabitsev' },
+  { url: 'https://fasterthanli.me/', label: 'fasterthanli.me' },
+  { url: 'https://tynanpurdy.com/', label: 'Tynan Purdy' },
+  { url: 'https://aly.codes/', label: 'Aly Raffauf' },
+  { url: 'https://overreacted.io/', label: 'overreacted' },
+];
+---
+
+<BaseLayout title="Links — Marius Kimmina" description="A small list of websites Marius likes." path="/links/">
+  <section class="page-shell page-intro links-intro">
+    <h1>Links</h1>
+    <p>A tiny, hand-picked trail out of here.</p>
+  </section>
+  <section class="page-shell link-list" aria-label="Recommended websites">
+    {links.map((item) => (
+      <a href={item.url} class="link-entry">
+        <span><strong>{item.label}</strong><small>{item.url.replace('https://', '')}</small></span>
+      </a>
+    ))}
+  </section>
+</BaseLayout>

@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ActivityGrid from '../components/ActivityGrid.astro';
+import data from '../data/atproto.json';
+
+const TRACKED_DECK_URI = 'at://did:plc:tbzfsowmg4zj234pws47u3x6/io.kosakata.deck/3muakgwj6rt2o';
+const TRACKED_DECK_URL = 'https://kosakata.app/discover/did%3Aplc%3Atbzfsowmg4zj234pws47u3x6/3muakgwj6rt2o';
+const decks: any[] = data.kosakata.decks || [];
+const cards: any[] = data.kosakata.cards || [];
+const sessions: any[] = data.kosakata.sessions || [];
+const trackedDeck = decks.find((deck) => deck.uri === TRACKED_DECK_URI);
+const trackedCards = cards.filter((card) => card.deckUri === TRACKED_DECK_URI);
+const trackedSessions = sessions.filter((session) => session.deckUri === TRACKED_DECK_URI);
+const studyActivity = trackedSessions.map((session) => ({
+  uri: session.uri,
+  collection: 'io.kosakata.session',
+  app: 'Kosakata',
+  date: session.startedAt,
+  label: `Studied ${trackedDeck?.name || 'Traditional Chinese'}`,
+  url: 'https://kosakata.app/',
+}));
+const activeDays = new Set(trackedSessions.map((session) => session.startedAt.slice(0, 10))).size;
+const activeMinutes = Math.round(trackedSessions.reduce((sum, session) => sum + (session.activeSeconds || 0), 0) / 60);
+
+const languageNames: Record<string, string> = {
+  'zh-Hant': 'Traditional Chinese',
+  en: 'English',
+  es: 'Spanish',
+  de: 'German',
+};
+
+function prettyLanguage(value = '') {
+  return value.split(',').map((part) => languageNames[part.trim()] || part.trim()).join(', ');
+}
+
+function route(deck: any) {
+  if (deck.sourceLanguages?.length && deck.targetLanguages?.length) {
+    return `${deck.sourceLanguages.map(prettyLanguage).join(', ')} → ${deck.targetLanguages.map(prettyLanguage).join(', ')}`;
+  }
+  return prettyLanguage(deck.language);
+}
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function compactDate(value: string) {
+  return new Date(value).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+---
+
+<BaseLayout title="Languages — Marius Kimmina" description="Marius Kimmina’s public language-learning notebooks and study activity from Kosakata." path="/languages/">
+  <section class="language-hero page-shell">
+    <div>
+      <h1>Languages</h1>
+      <p>I’m learning Traditional Chinese. This page follows my <strong><a class="tracked-deck-link" href={TRACKED_DECK_URL}>{trackedDeck?.name || 'Marius Traditional Chinese Deck'}</a></strong> on Kosakata.</p>
+      <a class="text-link" href="https://kosakata.app/">Open Kosakata ↗</a>
+    </div>
+    <dl class="language-stats">
+      <div><dt>Cards</dt><dd>{trackedCards.length}</dd></div>
+      <div><dt>Sessions</dt><dd>{trackedSessions.length}</dd></div>
+      <div><dt>Active days</dt><dd>{activeDays}</dd></div>
+      <div class="date-stat"><dt>Started</dt><dd>{trackedDeck?.createdAt ? compactDate(trackedDeck.createdAt) : 'Now'}</dd></div>
+    </dl>
+  </section>
+
+  <section class="page-shell language-rhythm">
+    <ActivityGrid activity={studyActivity} title="Study rhythm" id="study-rhythm-title" note={trackedSessions.length ? `${trackedSessions.length} sessions across ${activeDays} days${activeMinutes ? ` · ${activeMinutes} focused minutes recorded` : ''}` : ''} />
+  </section>
+
+  <section class="language-notebooks">
+    <div class="page-shell">
+      <header class="language-section-heading"><div><h2>Tracked notebook</h2></div></header>
+      <div class="notebook-list">
+        {trackedDeck && (
+          <article class="notebook">
+            <div><p>{route(trackedDeck)}{trackedDeck.difficulty && ` · ${trackedDeck.difficulty}`}</p><h3><a href={TRACKED_DECK_URL}>{trackedDeck.name}</a></h3></div>
+            <dl><div><dt>Cards</dt><dd>{trackedCards.length}</dd></div><div><dt>Sessions</dt><dd>{trackedSessions.length}</dd></div></dl>
+          </article>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell word-desk" aria-labelledby="word-desk-title">
+    <header class="language-section-heading"><div><h2 id="word-desk-title">Recently added</h2></div></header>
+    <div class="word-grid">
+      {trackedCards.slice(0, 8).map((card, index) => (
+        <article class="word-card" style={`--word-tilt:${((index % 5) - 2) * .35}deg`}>
+          <div class="word-front"><strong lang={card.language}>{card.prompt}</strong>{card.hint && <small>{card.hint}</small>}</div>
+          <div class="word-answer"><p>{card.answer}</p><span>{card.deckName} · {formatDate(card.updatedAt)}</span></div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

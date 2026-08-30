@@ -1,0 +1,78 @@
+---
+import '@fontsource-variable/atkinson-hyperlegible-next';
+import '@fontsource-variable/bricolage-grotesque';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+}
+
+const {
+  title = 'Marius Kimmina — building in the atmosphere',
+  description = 'Writing, reading, and experiments around ATProto, digital sovereignty, language learning, and padel.',
+  path = Astro.url.pathname,
+} = Astro.props;
+
+const nav = [
+  { href: '/', label: 'Home' },
+  { href: '/writing/', label: 'Writing' },
+  { href: '/work/', label: 'Work' },
+  { href: '/talks/', label: 'Talks' },
+  { href: '/books/', label: 'Books' },
+  { href: '/languages/', label: 'Languages' },
+  { href: '/uses/', label: 'Uses' },
+  { href: '/links/', label: 'Links' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#eaf3ed" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={new URL(path, Astro.site)} />
+    <link rel="me" href="https://bsky.app/profile/mariuskimmina.com" />
+    <link rel="me" href="https://sifa.id/p/mariuskimmina.com" />
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="site-mark" href="/" aria-label="Marius Kimmina, home">
+        <span>Marius <strong>Kimmina</strong></span>
+      </a>
+      <nav aria-label="Main navigation">
+        {nav.map((item) => (
+          <a href={item.href} aria-current={path === item.href || (item.href !== '/' && path.startsWith(item.href)) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+      <a class="contact-button" href="/contact/">Contact</a>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div>
+        <span class="footer-scribble" aria-hidden="true">〰</span>
+        <p><a href="https://brittanyellich.com/atproto/">Built from my PDS.</a></p>
+      </div>
+      <div class="footer-links">
+        <a href="https://bsky.app/profile/mariuskimmina.com">Bluesky</a>
+        <a href="https://sifa.id/p/mariuskimmina.com">Sifa</a>
+        <a href="https://tangled.org/mariuskimmina.com">Tangled</a>
+        <a href="https://github.com/mariuskimmina">GitHub</a>
+      </div>
+      <p class="footer-small">© {new Date().getFullYear()} Marius Kimmina</p>
+    </footer>
+  </body>
+</html>

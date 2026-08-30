@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import data from '../data/atproto.json';
+
+const profile = data.sifa.self?.[0];
+const location = data.sifa.location?.find((item) => item.isPrimary)?.address;
+const positions: any[] = [...(data.sifa.position || [])].sort((a, b) => {
+  if (!a.endedAt && b.endedAt) return -1;
+  if (a.endedAt && !b.endedAt) return 1;
+  return (b.startedAt || '').localeCompare(a.startedAt || '');
+});
+const education = [...(data.sifa.education || [])].sort((a, b) => (b.startedAt || '').localeCompare(a.startedAt || ''));
+const skills = data.sifa.skill || [];
+const languages = data.sifa.language || [];
+const projects = data.sifa.project || [];
+
+function prettyMonth(value?: string) {
+  if (!value) return 'Present';
+  const [year, month] = value.split('-').map(Number);
+  return new Date(Date.UTC(year, (month || 1) - 1, 1)).toLocaleDateString('en', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+}
+
+function proficiency(value: string) {
+  return value.replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+---
+
+<BaseLayout title="Work — Marius Kimmina" description="Work experience, education, projects, and skills from Marius Kimmina's Sifa profile." path="/work/">
+  <section class="work-hero page-shell">
+    <div>
+      <h1>Work</h1>
+    </div>
+    <div class="work-summary">
+      <img src="/images/profile.jpg" alt="Portrait of Marius Kimmina" width="180" height="180" />
+      <div>
+        <strong>{profile?.headline || 'Software Engineer'}</strong>
+        {location && <span>{location.locality}, {location.country}</span>}
+        <span>{profile?.pronouns}</span>
+        <a href="https://sifa.id/p/mariuskimmina.com">View on Sifa ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell work-section" aria-labelledby="experience-title">
+    <header><h2 id="experience-title">Experience</h2></header>
+    <div class="timeline">
+      {positions.map((position) => (
+        <article class:list={['timeline-item', !position.endedAt && 'is-current']}>
+          <div class="timeline-date"><span>{prettyMonth(position.startedAt)}</span><span>— {prettyMonth(position.endedAt)}</span></div>
+          <div><h3>{position.title}</h3>{position.entityRef ? <a href={position.entityRef}>{position.company} ↗</a> : <p>{position.company}</p>}{position.description && <p>{position.description}</p>}</div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="work-secondary">
+    <div class="page-shell work-columns">
+      <section aria-labelledby="education-title">
+        <h2 id="education-title">Education</h2>
+        <div class="education-list">{education.map((item) => <article><time>{prettyMonth(item.startedAt)} — {prettyMonth(item.endedAt)}</time><h3>{item.degree}</h3><strong>{item.institution}</strong>{item.description && <p>{item.description}</p>}</article>)}</div>
+      </section>
+      <div class="work-side-column">
+        <section aria-labelledby="language-title">
+          <h2 id="language-title">Languages</h2>
+          <div class="language-list">{languages.map((language) => <p><strong>{language.name}</strong><span>{proficiency(language.proficiency)}</span></p>)}</div>
+        </section>
+        {projects.length > 0 && (
+          <section class="project-section" aria-labelledby="projects-title">
+            <h2 id="projects-title">Projects</h2>
+            <div class="project-list">{projects.map((project) => <a href={project.url}><strong>{project.name}</strong><span>Since {prettyMonth(project.startedAt)} ↗</span></a>)}</div>
+          </section>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell skill-section" aria-labelledby="skills-title">
+    <div><h2 id="skills-title">Skills</h2></div>
+    <ul class="skill-list">{skills.map((skill) => <li>{skill.name}</li>)}</ul>
+  </section>
+</BaseLayout>

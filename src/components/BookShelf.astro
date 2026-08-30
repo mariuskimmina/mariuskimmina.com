@@ -1,0 +1,37 @@
+---
+interface Book {
+  uri: string;
+  title: string;
+  authors: string;
+  stars?: number;
+  cover?: string;
+  url: string;
+  status?: string;
+}
+const { books = [] } = Astro.props as { books: Book[] };
+
+const readingStatus = (status?: string) => {
+  if (status?.endsWith('#reading')) return { label: 'Reading', className: 'is-reading' };
+  if (status?.endsWith('#finished')) return { label: 'Read', className: 'is-read' };
+  return undefined;
+};
+---
+
+<div class="bookshelf">
+  {books.map((book, index) => {
+    const status = readingStatus(book.status);
+    return (
+      <a class="book" href={book.url} style={`--book-index:${index}`}>
+        <span class="book-cover">
+          {book.cover ? <img src={book.cover} alt="" loading="lazy" width="160" height="240" /> : <span class="book-fallback">{book.title}</span>}
+        </span>
+        <span class="book-info">
+          {status && <small class:list={['book-reading-status', status.className]}>{status.label}</small>}
+          <strong>{book.title}</strong>
+          <span>{book.authors}</span>
+          {book.stars && <small>{book.stars}/10</small>}
+        </span>
+      </a>
+    );
+  })}
+</div>

@@ -1,0 +1,17 @@
+---
+import RichText from './RichText.astro';
+const { blocks = [] } = Astro.props as { blocks: any[] };
+---
+
+<div class="leaflet-body">
+  {blocks.map((block) => {
+    if (block.type === 'text') return block.segments?.some((segment: any) => segment.text.trim()) ? <p><RichText segments={block.segments} /></p> : null;
+    if (block.type === 'code') return <figure class="code-block"><figcaption>{block.language || 'code'}</figcaption><pre><code>{block.text}</code></pre></figure>;
+    if (block.type === 'image' && block.src) return <figure class="article-image"><img src={block.src} alt="" loading="lazy" /></figure>;
+    if (block.type === 'list') return (
+      <ul>{block.items.map((item: any) => <li><RichText segments={item.segments} />{item.children?.length > 0 && <ul>{item.children.map((child: any) => <li><RichText segments={child.segments} /></li>)}</ul>}</li>)}</ul>
+    );
+    if (block.type === 'bsky' && block.url) return <aside class="bsky-embed"><span aria-hidden="true">🦋</span><div><strong>A post from Bluesky</strong><a href={block.url}>Open the referenced post ↗</a></div></aside>;
+    return null;
+  })}
+</div>

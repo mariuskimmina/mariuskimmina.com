@@ -1,0 +1,31 @@
+---
+interface Writing {
+  uri: string;
+  title: string;
+  description: string;
+  publishedAt: string;
+  tags: string[];
+  source: string;
+  url: string;
+}
+
+const { items = [], limit } = Astro.props as { items: Writing[]; limit?: number };
+const visible = typeof limit === 'number' ? items.slice(0, limit) : items;
+---
+
+<div class="writing-list">
+  {visible.map((item, index) => (
+    <article class="writing-item" style={`--i:${Math.min(index, 7)}`}>
+      <div class="writing-meta">
+        <time datetime={item.publishedAt}>{new Date(item.publishedAt).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}</time>
+        <span>{item.source}</span>
+      </div>
+      <div class="writing-copy">
+        <h3><a href={item.url}>{item.title}</a></h3>
+        {item.description && <p>{item.description}</p>}
+        {item.tags?.length > 0 && <div class="tag-row">{item.tags.slice(0, 4).map((tag) => <span>{tag}</span>)}</div>}
+      </div>
+      <a class="writing-arrow" href={item.url} aria-label={`Read ${item.title}`}><span aria-hidden="true">↗</span></a>
+    </article>
+  ))}
+</div>

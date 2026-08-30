@@ -1,0 +1,193 @@
+---
+interface Activity {
+  uri: string;
+  collection: string;
+  app: string;
+  date: string;
+  label: string;
+  url?: string;
+}
+
+const {
+  activity = [],
+  title = 'Activity in the atmosphere',
+  id = 'activity-title',
+  note,
+} = Astro.props as { activity: Activity[]; title?: string; id?: string; note?: string };
+const today = new Date();
+today.setHours(12, 0, 0, 0);
+const end = new Date(today);
+end.setDate(end.getDate() - end.getDay() + 6);
+const start = new Date(end);
+start.setDate(start.getDate() - (53 * 7 - 1));
+
+const dayKey = (date: Date | string) => {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+const grouped = new Map<string, Activity[]>();
+for (const item of activity) {
+  const key = dayKey(item.date);
+  const list = grouped.get(key) || [];
+  list.push(item);
+  grouped.set(key, list);
+}
+
+const appColors: Record<string, string> = {
+  Bluesky: 'var(--blue)',
+  Leaflet: 'var(--turquoise)',
+  Kosakata: 'var(--moss)',
+  BookHive: 'var(--honey)',
+  Sifa: 'var(--plum)',
+  Tangled: 'oklch(36% 0.07 155)',
+  Cosmik: 'oklch(63% 0.13 285)',
+  Skyreader: 'oklch(64% 0.13 205)',
+  Offprint: 'oklch(63% 0.16 15)',
+  Standard: 'oklch(46% 0.035 60)',
+  Spark: 'oklch(69% 0.16 345)',
+  ATProto: 'var(--ink-soft)',
+};
+
+const days = Array.from({ length: 53 * 7 }, (_, index) => {
+  const date = new Date(start);
+  date.setDate(start.getDate() + index);
+  const items = grouped.get(dayKey(date)) || [];
+  const apps = new Set(items.map((item) => item.app));
+  const counts = items.reduce<Record<string, number>>((result, item) => {
+    result[item.app] = (result[item.app] || 0) + 1;
+    return result;
+  }, {});
+  const app = apps.size > 1 ? 'Mixed' : [...apps][0] || 'None';
+  const color = app === 'Mixed' ? 'var(--ink)' : appColors[app];
+  return { date, items, app, color, counts, level: Math.min(4, items.length) };
+});
+
+const months: { label: string; column: number }[] = [];
+let seenMonth = -1;
+for (let week = 0; week < 53; week++) {
+  const date = new Date(start);
+  date.setDate(start.getDate() + week * 7);
+  if (date.getMonth() !== seenMonth) {
+    months.push({ label: date.toLocaleDateString('en', { month: 'short' }), column: week + 1 });
+    seenMonth = date.getMonth();
+  }
+}
+const appCounts = new Map<string, number>();
+for (const item of activity) appCounts.set(item.app, (appCounts.get(item.app) || 0) + 1);
+const activeApps = [...appCounts.entries()].sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count, color: appColors[name] || 'var(--ink-soft)' }));
+const displayNote = note === undefined ? `${activity.length} activities · ${activeApps.length} apps` : note;
+---
+
+<section class="activity-section" aria-labelledby={id} data-activity-calendar>
+  <div class="section-heading activity-heading">
+    <div>
+      <h2 id={id}>{title}</h2>
+    </div>
+    {displayNote && <p class="section-note" aria-live="polite" data-activity-note data-default-note={displayNote}>{displayNote}</p>}
+  </div>
+
+  <div class="activity-key" aria-label="Apps represented in the activity grid">
+    {activeApps.map((app) => (
+      <button
+        type="button"
+        aria-pressed="false"
+        aria-label={`Show only ${app.name} activity`}
+        title={`${app.count} ${app.count === 1 ? 'activity' : 'activities'}`}
+        data-activity-filter={app.name}
+        data-count={app.count}
+        data-color={app.color}
+        style={`--app-color:${app.color}`}
+      >
+        <i aria-hidden="true"></i>{app.name}
+      </button>
+    ))}
+  </div>
+
+  <div class="activity-scroll" tabindex="0" aria-label="Scrollable activity calendar">
+    <div class="calendar-shell">
+      <div class="month-row" aria-hidden="true">
+        {months.map((month) => <span style={`grid-column:${month.column}`}>{month.label}</span>)}
+      </div>
+      <div class="weekday-row" aria-hidden="true"><span>Mon</span><span>Wed</span><span>Fri</span></div>
+      <div class="activity-grid">
+        {days.map(({ date, items, app, color, counts, level }) => {
+          const readable = date.toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' });
+          const description = items.length ? `${items.length} ${items.length === 1 ? 'activity' : 'activities'}: ${items.slice(0, 3).map((item) => `${item.app}: ${item.label}`).join('; ')}` : `No activity on ${readable}`;
+          const label = `${readable}. ${app}. ${description}`;
+          return <span
+            class:list={['activity-day', `level-${level}`, date > today && 'is-future']}
+            style={color ? `--day-color:${color}` : undefined}
+            title={description}
+            aria-label={label}
+            data-date-label={readable}
+            data-app-counts={JSON.stringify(counts)}
+            data-default-color={color}
+            data-default-title={description}
+            data-default-label={label}
+          ></span>;
+        })}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const emptyDayColor = 'color-mix(in oklch, var(--line) 25%, var(--paper))';
+
+  document.querySelectorAll<HTMLElement>('[data-activity-calendar]').forEach((calendar) => {
+    if (calendar.dataset.filterReady) return;
+    calendar.dataset.filterReady = 'true';
+
+    const filters = [...calendar.querySelectorAll<HTMLButtonElement>('[data-activity-filter]')];
+    const days = [...calendar.querySelectorAll<HTMLElement>('.activity-day')];
+    const note = calendar.querySelector<HTMLElement>('[data-activity-note]');
+    let selectedApp = '';
+
+    const setFilter = (app: string) => {
+      selectedApp = selectedApp === app ? '' : app;
+
+      filters.forEach((filter) => {
+        const isSelected = filter.dataset.activityFilter === selectedApp;
+        filter.setAttribute('aria-pressed', String(isSelected));
+        filter.setAttribute('aria-label', isSelected ? 'Show activity from all apps' : `Show only ${filter.dataset.activityFilter} activity`);
+      });
+
+      days.forEach((day) => {
+        day.classList.remove('level-0', 'level-1', 'level-2', 'level-3', 'level-4');
+
+        if (!selectedApp) {
+          const total = Object.values(JSON.parse(day.dataset.appCounts || '{}') as Record<string, number>).reduce((sum, count) => sum + count, 0);
+          day.classList.add(`level-${Math.min(4, total)}`);
+          if (day.dataset.defaultColor) day.style.setProperty('--day-color', day.dataset.defaultColor);
+          else day.style.removeProperty('--day-color');
+          day.title = day.dataset.defaultTitle || '';
+          day.setAttribute('aria-label', day.dataset.defaultLabel || '');
+          return;
+        }
+
+        const counts = JSON.parse(day.dataset.appCounts || '{}') as Record<string, number>;
+        const count = counts[selectedApp] || 0;
+        const color = filters.find((filter) => filter.dataset.activityFilter === selectedApp)?.dataset.color || 'var(--ink-soft)';
+        const description = count
+          ? `${count} ${selectedApp} ${count === 1 ? 'activity' : 'activities'} on ${day.dataset.dateLabel}`
+          : `No ${selectedApp} activity on ${day.dataset.dateLabel}`;
+
+        day.classList.add(`level-${Math.min(4, count)}`);
+        day.style.setProperty('--day-color', count ? color : emptyDayColor);
+        day.title = description;
+        day.setAttribute('aria-label', description);
+      });
+
+      if (note) {
+        const activeFilter = filters.find((filter) => filter.dataset.activityFilter === selectedApp);
+        const count = Number(activeFilter?.dataset.count || 0);
+        note.textContent = activeFilter
+          ? `${count} ${count === 1 ? 'activity' : 'activities'} · ${selectedApp}`
+          : note.dataset.defaultNote || '';
+      }
+    };
+
+    filters.forEach((filter) => filter.addEventListener('click', () => setFilter(filter.dataset.activityFilter || '')));
+  });
+</script>

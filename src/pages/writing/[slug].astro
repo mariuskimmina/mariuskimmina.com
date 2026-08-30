@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LeafletBlocks from '../../components/LeafletBlocks.astro';
+import data from '../../data/atproto.json';
+
+export function getStaticPaths() {
+  return data.writing.map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const articleIndex = data.writing.findIndex((item) => item.slug === article.slug);
+const newer = articleIndex > 0 ? data.writing[articleIndex - 1] : null;
+const older = articleIndex < data.writing.length - 1 ? data.writing[articleIndex + 1] : null;
+---
+
+<BaseLayout title={`${article.title} — Marius Kimmina`} description={article.description} path={`/writing/${article.slug}/`}>
+  <article class="article-shell">
+    <header class="article-header page-shell">
+      <div class="article-kicker">
+        <a href="/writing/">← Writing</a>
+        <span>Published from Leaflet</span>
+      </div>
+      <h1>{article.title}</h1>
+      {article.description && <p class="article-dek">{article.description}</p>}
+      <div class="article-byline">
+        <img src="/images/profile.jpg" alt="" width="52" height="52" />
+        <div><strong>Marius Kimmina</strong><time datetime={article.publishedAt}>{new Date(article.publishedAt).toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' })}</time></div>
+        <a href={article.originalUrl}>Original on Leaflet ↗</a>
+      </div>
+      {article.tags.length > 0 && <div class="tag-row">{article.tags.map((tag) => <span>{tag}</span>)}</div>}
+    </header>
+    <div class="article-content page-shell">
+      {article.blocks.length > 0 ? <LeafletBlocks blocks={article.blocks} /> : <div class="article-empty"><span aria-hidden="true">◇</span><h2>This Leaflet is intentionally quiet.</h2><p>There’s nothing else here yet.</p><a href={article.originalUrl}>Check the original on Leaflet ↗</a></div>}
+    </div>
+    <footer class="article-footer page-shell">
+      <nav aria-label="More articles">
+        {older ? <a href={older.url}><small>Older</small><strong>{older.title}</strong></a> : <span></span>}
+        {newer && <a href={newer.url}><small>Newer</small><strong>{newer.title}</strong></a>}
+      </nav>
+    </footer>
+  </article>
+</BaseLayout>

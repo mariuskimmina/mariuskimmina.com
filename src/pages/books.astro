@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import data from '../data/atproto.json';
+
+const books = data.books;
+const finished = books.filter((book) => book.status?.endsWith('#finished'));
+const rated = books.filter((book) => typeof book.stars === 'number');
+const average = rated.length ? (rated.reduce((total, book) => total + book.stars, 0) / rated.length).toFixed(1) : null;
+const groups = [
+  { id: 'reading', label: 'Currently Reading', shortLabel: 'Reading', books: books.filter((book) => !book.status || book.status.endsWith('#reading')) },
+  { id: 'want-to-read', label: 'Want to Read', shortLabel: 'Want to Read', books: books.filter((book) => book.status?.endsWith('#wantToRead')) },
+  { id: 'read', label: 'Read', shortLabel: 'Read', books: books.filter((book) => book.status?.endsWith('#finished')) },
+  { id: 'abandoned', label: 'Abandoned', shortLabel: 'Abandoned', books: books.filter((book) => book.status?.endsWith('#abandoned')) },
+];
+---
+
+<BaseLayout title="Books — Marius Kimmina" description="What Marius Kimmina is reading and has read." path="/books/">
+  <section class="books-hero page-shell">
+    <div>
+      <h1>Books</h1>
+      <p>A library should be a little messy.</p>
+    </div>
+    <dl class="book-stats">
+      <div><dt>On the shelf</dt><dd>{books.length}</dd></div>
+      <div><dt>Marked finished</dt><dd>{finished.length}</dd></div>
+      <div><dt>Average rating</dt><dd>{average || '—'}<small>/10</small></dd></div>
+    </dl>
+  </section>
+
+  <nav class="book-group-nav page-shell" aria-label="Book status groups">
+    {groups.map((group) => <a href={`#${group.id}`}><span>{group.shortLabel}</span><small>{group.books.length}</small></a>)}
+  </nav>
+
+  {groups.map((group, groupIndex) => (
+    <section id={group.id} class:list={['book-group', groupIndex % 2 === 1 && 'book-group-tinted']} aria-labelledby={`${group.id}-title`}>
+      <header class="book-group-heading page-shell">
+        <div><h2 id={`${group.id}-title`}>{group.label}</h2></div>
+        <p>{group.books.length} {group.books.length === 1 ? 'book' : 'books'}</p>
+      </header>
+      {group.books.length > 0 ? (
+        <div class:list={['page-shell', 'full-library', group.books.length === 1 && 'is-single']}>
+          {group.books.map((book, index) => (
+            <article class="library-book" style={`--book-i:${index % 7}`}>
+              <a href={book.url} class="library-cover">
+                {book.cover ? <img src={book.cover} alt={`Cover of ${book.title}`} loading="lazy" width="180" height="270" /> : <span>{book.title}</span>}
+              </a>
+              <div>
+                <h3><a href={book.url}>{book.title}</a></h3>
+                <p>{book.authors}</p>
+                <div class="book-status">{book.stars && <span>{book.stars}/10</span>}{group.id === 'read' && <span>Finished</span>}</div>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : <div class="empty-book-group page-shell"><span aria-hidden="true">○</span><p>No books in this part of the shelf yet.</p></div>}
+    </section>
+  ))}
+  <div class="page-shell books-source"><a href="https://bookhive.buzz/">Open BookHive ↗</a></div>
+</BaseLayout>

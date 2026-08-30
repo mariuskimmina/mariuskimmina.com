@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import data from '../data/atproto.json';
+
+const presentations: any[] = data.sifa.presentation || [];
+const deliveries: any[] = data.sifa.presentationDelivery || [];
+const presentationByUri = new Map(presentations.map((item) => [item.uri, item]));
+
+const localHistory: Record<string, { eventName: string; dateLabel: string; sortDate: string; description: string }> = {
+  'from spot ocean to karpenter - one year later': {
+    eventName: 'SREday Amsterdam',
+    dateLabel: '2025 Q4',
+    sortDate: '2025-10-01',
+    description: 'A follow-up session exploring the long-term impact of our migration to Karpenter. I discuss operational stability, cost savings over 12 months, and how we optimized our autoscaling strategy for a growing Kubernetes fleet.',
+  },
+  'from spot ocean to karpenter - zero downtime migration': {
+    eventName: 'SREday London',
+    dateLabel: '2025 Q1',
+    sortDate: '2025-01-01',
+    description: 'A technical deep dive into our migration journey. This talk covers the architectural challenges of moving from a managed solution like Spot Ocean to an open-source alternative, ensuring a seamless transition for our production workloads.',
+  },
+};
+
+function key(title = '') {
+  return title.toLowerCase().replace(/[–—:]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function formatDate(value: string) {
+  return new Date(`${value}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+}
+
+function refUri(ref: any) {
+  return typeof ref === 'string' ? ref : ref?.uri;
+}
+
+const delivered = deliveries.map((delivery) => {
+  const presentation = presentationByUri.get(refUri(delivery.presentationRef)) || {};
+  const title = presentation.title || delivery.title;
+  const local = localHistory[key(title)];
+  return {
+    ...presentation,
+    ...delivery,
+    title,
+    description: presentation.description || local?.description,
+    links: [...(delivery.links || []), ...(presentation.links || [])],
+  };
+});
+
+const deliveredUris = new Set(deliveries.map((item) => refUri(item.presentationRef)).filter(Boolean));
+const undelivered = presentations.filter((item) => !deliveredUris.has(item.uri)).map((presentation) => ({
+  ...presentation,
+  ...(localHistory[key(presentation.title)] || {}),
+}));
+
+const pastTalks = [...delivered, ...undelivered]
+  .filter((talk) => talk.date ? new Date(`${talk.date}T23:59:59Z`) < new Date() : true)
+  .sort((a, b) => (b.date || b.sortDate || '').localeCompare(a.date || a.sortDate || ''));
+
+const upcomingFromSifa = delivered
+  .filter((talk) => talk.date && new Date(`${talk.date}T23:59:59Z`) >= new Date())
+  .sort((a, b) => a.date.localeCompare(b.date));
+
+const upcoming = upcomingFromSifa.length ? upcomingFromSifa : [{
+  title: 'Technical talk — details coming soon',
+  eventName: 'bit summit',
+  date: '2026-09-24',
+  links: [{ uri: 'https://bit-summit.com/', type: 'event' }],
+}];
+
+function primaryLink(talk: any) {
+  return talk.links?.find((link: any) => link.type?.endsWith('linkRecording')) || talk.links?.[0];
+}
+---
+
+<BaseLayout title="Talks — Marius Kimmina" description="Conference talks by Marius Kimmina." path="/talks/">
+  <section class="talks-hero page-shell">
+    <div class="talks-intro">
+      <h1>Talks</h1>
+      <p>I like turning infrastructure lessons into stories other people can use. Most of my talks are about Kubernetes, reliability, and the trade-offs hidden behind “just migrate it.”</p>
+      <a class="text-link" href="mailto:hello@mariuskimmina.com">Invite me to speak →</a>
+    </div>
+    <figure class="talk-photo">
+      <img src="/images/speaking.png" alt="Marius speaking at a conference" width="1200" height="800" />
+      <figcaption>My first conference talk, at SREday London.</figcaption>
+    </figure>
+  </section>
+
+  <section class="upcoming-talks">
+    <div class="page-shell">
+      <header class="talk-section-heading">
+        <div><h2>Upcoming</h2></div>
+        <span class="talk-stamp">See you there?</span>
+      </header>
+      {upcoming.map((talk) => (
+        <article class="upcoming-talk">
+          <time datetime={talk.date}>{formatDate(talk.date)}</time>
+          <div>
+            <p>{talk.eventName}{talk.location && <span> · {talk.location}</span>}</p>
+            <h3>{talk.title}</h3>
+            <p>I’ll be giving a technical talk at bit summit this year. The topic and session time will follow.</p>
+          </div>
+          {primaryLink(talk) && <a href={primaryLink(talk).uri} aria-label={`Visit ${talk.eventName}`}>Event site ↗</a>}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="page-shell past-talks" aria-labelledby="past-talks-title">
+    <header class="talk-section-heading">
+      <div><h2 id="past-talks-title">Past talks</h2></div>
+      <a class="text-link" href="https://sifa.id/p/mariuskimmina.com">Talks on Sifa ↗</a>
+    </header>
+    <div class="talk-list">
+      {pastTalks.map((talk) => (
+        <article class="talk-entry">
+          <div class="talk-date">
+            {talk.date ? <time datetime={talk.date}>{formatDate(talk.date)}</time> : <span>{talk.dateLabel}</span>}
+          </div>
+          <div class="talk-copy">
+            <p>{talk.eventName || 'Presentation'}</p>
+            <h3>{talk.title}</h3>
+            {talk.description && <p>{talk.description}</p>}
+            <div class="talk-meta">
+              {talk.duration?.minMinutes && <span>{talk.duration.minMinutes} minutes</span>}
+              {talk.intendedAudiences?.map((audience: string) => <span>{audience}</span>)}
+            </div>
+          </div>
+          {primaryLink(talk) && <a class="talk-watch" href={primaryLink(talk).uri}>Watch <span aria-hidden="true">↗</span></a>}
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

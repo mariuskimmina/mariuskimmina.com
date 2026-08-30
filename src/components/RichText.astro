@@ -1,0 +1,12 @@
+---
+interface Segment { text: string; type?: 'link' | 'mention' | 'code' | 'bold' | 'italic'; url?: string }
+const { segments = [] } = Astro.props as { segments: Segment[] };
+---
+
+{segments.map((segment) => {
+  if (segment.type === 'code') return <code>{segment.text}</code>;
+  if (segment.type === 'bold') return <strong>{segment.text}</strong>;
+  if (segment.type === 'italic') return <em>{segment.text}</em>;
+  if ((segment.type === 'link' || segment.type === 'mention') && segment.url) return <a href={segment.url}>{segment.text}</a>;
+  return segment.text;
+})}
