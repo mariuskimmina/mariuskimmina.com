@@ -4,16 +4,16 @@ import '@fontsource-variable/bricolage-grotesque';
 import '../styles/global.css';
 
 interface Props {
-  title?: string;
   description?: string;
   path?: string;
 }
 
 const {
-  title = 'Marius Website',
-  description = 'Writing, reading, and experiments around ATProto, digital sovereignty, language learning, and padel.',
+  description = 'Things I write, read, build, and learn.',
   path = Astro.url.pathname,
 } = Astro.props;
+
+const title = 'Marius Website';
 
 const nav = [
   { href: '/', label: 'Home' },

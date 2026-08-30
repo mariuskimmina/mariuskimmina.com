@@ -13,7 +13,7 @@ const newer = articleIndex > 0 ? data.writing[articleIndex - 1] : null;
 const older = articleIndex < data.writing.length - 1 ? data.writing[articleIndex + 1] : null;
 ---
 
-<BaseLayout title={`${article.title} — Marius Kimmina`} description={article.description} path={`/writing/${article.slug}/`}>
+<BaseLayout description={article.description} path={`/writing/${article.slug}/`}>
   <article class="article-shell">
     <header class="article-header page-shell">
       <div class="article-kicker">
